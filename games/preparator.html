@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Hue Preparator</title>
+	<script src="js/jq.mobi-1.2.min.js"></script>
+	<script src="cordova-q42.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/colors.js"></script>
+	<script src="js/settings.js"></script>
+	<script src="js/hue.js"></script>
+	
+	<script>
+//   01 02 03 04 05 06 07
+//   08 09 10 11 12 13 14
+//   15 16 17 18 19 20 21
+//   22 23 24 25 26 27 28
+//   29 30 31 32 33 34 35
+//   36 37 38 39 40 41 42
+//   43 44 45 46 47 48 49
+
+var numberOfLamps = 21;
+var knightRiderLength = 3;
+
+var stopBackgroundLights = false;
+
+var verticalGroups = [
+	{ id : "5", lights : [ "1"/*,"8","15"/*,"22","29","36","43"*/] },
+	{ id : "6", lights : [ "2"/*,"9","16","23","30","37","44"]*/] },
+	{ id : "7", lights : [ "3"/*,"10","17","24","31","38","45"]*/] },
+	{ id : "8", lights : [ "4"/*,"11","18","25","32","39","46"]*/] },
+	{ id : "9", lights : [ "5"/*,"12","19","26","33","40","47"]*/] },
+	{ id : "10", lights : [ "6"/*,"13","20","27","34","41","48"]*/] } /*,
+	{ id : "11", lights : [ "7","14","21","28","35","42","49"]}*/
+];
+
+var horizontalGroups = [
+	{ id : "12", lights : [ "1", "2", "3", "4", "5", "6", "7" ] },
+	{ id : "13", lights : [ "8", "9", "10", "11", "12", " 13", " 14" ]},
+	{ id : "14", lights : [ "15", "16", "17", "18", "19", "20", "21" ]},
+	{ id : "15", lights : [ "22", "23", "24", "25", "26", "27", "28" ]},
+	{ id : "16", lights : [ "29", "30", "31", "32", "33", "34", "35" ]},
+	{ id : "17", lights : [ "36", "37", "38", "39", "40", "41", "42" ]},
+	{ id : "18", lights : [ "43", "44", "45", "46", "47", "48", "49" ]}
+];
+
+var lamps = [ "1", "2", "3", "4", "5" ];
+
+var redGroup = [ "2", "3", "4", "5", "6", "8", "9", "10", "11", "12", "13", "14", "16" ];
+var greenGroup = [ "15", "22", "23", "29", "30", "36", "37", "38", "39", "44", "45" ];
+var yellowGroup = [ "20", "21", "27", "28", "34", "35", "40", "41", "42", "46", "47", "48" ];
+var blueGroup = [ "17", "18", "19", "24", "25", "26", "31", "32", "33" ];
+
+var colorDict = {
+	red : "ff0000",
+	green : "00ff00",
+	blue : "251AFF",
+	yellow : "FFB61A"
+};
+
+/*
+var redGroup = ["1"];
+var greenGroup = ["2"];
+var yellowGroup = ["3"];
+var blueGroup = ["4"];
+ */
+var redGroupId = "1";
+var greenGroupId = "2";
+var yellowGroupId = "3";
+var blueGroupId = "4";
+
+var allGroups = {
+	red : redGroup,
+	green : greenGroup,
+	yellow : yellowGroup,
+	blue : blueGroup
+};
+
+function init() {
+
+	//hue.setIpAndApiKey("10.42.9.38", "christiaan");
+	hue.setIpAndApiKey(Settings.bridgeIP, Settings.bridgeKey);
+
+	/*for (var i=0; i<lamps.length; i++) {
+		//hue.setColor(i, 'FF0000');
+		hue.turnOn(i);
+		console.log("lamp ", i, " set.");
+	}	*/
+
+	//hue.setNumberOfLamps(29);
+	//hue.turnOn(1);
+	// delete all groups
+
+	//hue.setAllColors("FF0000");
+	//hue.turnOff();
+
+}
+
+function setAllBrightness() {
+	hue.setAllBrightness(Settings.defaultBrightness);
+}
+
+function lampsPrepareSimonGame() {
+	//hue.turnOn("1");
+	//hue.turnOff("2");
+	//hue.turnOff("3");
+	//hue.turnOff("4");
+
+	//hue.turnOffAll();
+
+	/*window.setTimeout(
+		"hue.turnOnAll(redGroupId);hue.turnOnAll(greenGroupId);hue.turnOnAll(yellowGroupId);hue.turnOnAll(blueGroupId);", 3000);
+	 */
+
+	//hue.setColor("1", '#ff0000');
+	hue.turnOnAll(redGroupId);
+
+	hue.turnOnAll(blueGroupId);
+	hue.turnOnAll(greenGroupId);
+	hue.turnOnAll(yellowGroupId);
+
+	hue.setAllColors(colorDict.red, redGroupId);
+	hue.setAllColors(colorDict.green, greenGroupId);
+
+	hue.setAllColors(colorDict.blue, blueGroupId);
+	hue.setAllColors(colorDict.yellow, yellowGroupId);
+
+	//hue.setAllColors('#00ff00', redGroupId);
+}
+
+function deleteAllGroups() {
+	var groups = hue.listAllGroups();
+	console.log(groups);
+	var s = '';
+	for ( var group in groups) {
+		console.log("deleting group ", group);
+		s += "group " + group + ",";
+		hue.deleteGroup(group);
+		Utils.sleep(2000);
+	}
+	alert("groups deleted:" + s);
+}
+
+function createAllGroups() {
+	redGroupId = hue.createGroup("red", redGroup);
+	Utils.sleep(2000);
+	greenGroupId = hue.createGroup("green", greenGroup);
+	Utils.sleep(2000);
+	yellowGroupId = hue.createGroup("yellow", yellowGroup);
+	Utils.sleep(2000);
+	blueGroupId = hue.createGroup("blue", blueGroup);
+
+	alert("group ids:" + redGroupId + "," + greenGroupId + ","
+			+ yellowGroupId + "," + blueGroupId);
+
+	/*
+	 // create vertical groups too
+	 for (var i=0; i<verticalGroups.length; i++) {
+	 var group = verticalGroups[i];
+	 group.id = hue.createGroup("v"+i, group.lights);
+	 }
+
+	 /*
+	 // create horizontal groups too
+	 for (var i=0; i<horizontalGroups.length; i++) {
+	 var group = horizontalGroups[i];
+	 group.id = hue.createGroup("h"+i, group.lights);
+	 }*/
+
+}
+
+function setSergeyColors() {
+	hue.turnOnAll(1);
+	hue.turnOnAll(2);
+	hue.turnOnAll(3);
+	hue.turnOnAll(4);
+
+	Utils.sleep(2000);
+
+	hue.setAllColors(colorDict.red, 1);
+	hue.setAllColors(colorDict.green, 2);
+	hue.setAllColors(colorDict.yellow, 3);
+	hue.setAllColors(colorDict.blue, 4);
+}
+
+function flashGroup(groupId) {
+	hue.turnOnAll(groupId);
+	hue.turnOffAll(greenGroupId);
+
+	setTimeout('hue.turnOffAll("' + groupId + '"); hue.turnOnAll(greenGroupId); ', 400);
+}
+
+function knightRiderStart() {
+	hue.turnOffAll();
+
+	stopBackgroundLights = false;
+
+	console.log("knightRider start");
+	knightRider(1);
+}
+
+function knightRider(step) {
+	if (stopBackgroundLights) {
+		// stop!
+		hue.turnOffAll();
+		return;
+	}
+
+	hue.setTransitionTime(10);
+	hue.turnOn(step, true);
+
+	var lastInRow = step - knightRiderLength;
+	if (lastInRow < 1)
+		lastInRow = numberOfLamps + lastInRow;
+
+	hue.setTransitionTime(10);
+
+	hue.turnOff(lastInRow, true);
+
+	step++;
+
+	if (step > numberOfLamps)
+		step = 1;
+
+	setTimeout('knightRider(' + step + ')', 300);
+}
+
+function colorLoopStart() {
+	//hue.turnOffAll();
+
+	stopBackgroundLights = false;
+
+	hue.turnOnAll();
+	Utils.sleep(1000);
+
+	hue.setAllColors('ff0000', 0);
+	//hue.setAllColors('ff0000', greenGroupId);
+	//hue.setAllColors('ff0000', yellowGroupId);
+	//hue.setAllColors('ff0000', blueGroupId);
+	Utils.sleep(2000);
+
+	//for (var i=5; i<5+)
+
+	setTimeout('hue.groupColorLoop(redGroupId);', 0);
+	setTimeout('hue.groupColorLoop(greenGroupId);', 2000);
+	setTimeout('hue.groupColorLoop(yellowGroupId);', 4000);
+	setTimeout('hue.groupColorLoop(blueGroupId);', 6000);
+
+	console.log("colorLoop start");
+	colorLoop(1);
+}
+
+function colorLoop(step) {
+	if (stopBackgroundLights) {
+		// stop!
+		hue.turnOffAll();
+		return;
+	}
+	setTimeout('colorLoop(' + step + ')', 500);
+}
+
+function stopBackgroundMode() {
+	stopBackgroundLights = true;
+}
+	</script>
+</head>
+<body onload="init()">
+
+<div style="left: 0px; position: absolute;">
+	<a href="index.html">Back to Game</a>
+</div>
+<div style="right: 0px; position: absolute;">
+	<a href="clip.html">Admin</a>
+</div>
+<br>
+<hr>
+<button onclick="deleteAllGroups();">Delete All Groups</button>
+<button onclick="createAllGroups();">Create All Groups</button>
+<button onclick="setSergeyColors();">setSergeyColors</button>
+<button onclick="setAllBrightness();">setAllbrightness</button>
+<button onclick="knightRiderStart();">knightRider</button>
+<button onclick="colorLoopStart();">colorLoop</button>
+<button onclick="stopBackgroundMode();">stop background</button>
+
+</body>
+</html>

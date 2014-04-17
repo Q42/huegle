@@ -1,0 +1,74 @@
+#games {
+	font-family: 'Tech', 'Arial';
+	overflow-x: hidden;
+}
+#games h1 {
+	margin: 0;
+	font-weight: normal;
+	font-size: 100px;
+	text-align: center;
+	margin: 50px 0;
+	text-transform: uppercase;
+	opacity: 0; 
+}
+#games p {
+	display: block;
+	color: #000;
+	font-size: 30px;
+	text-align: center;
+	text-decoration: none;
+	color: #999;
+	opacity: 0; 
+}
+#games a {
+	display: block;
+	color: #000;
+	font-size: 50px;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	text-transform: uppercase;
+	margin: 40px 0;
+}
+#games.no-animations * {
+	 -webkit-transition: none !important;
+}
+#game1 { opacity: 0; -webkit-transform: translate(400px, 0); }
+#game2 { opacity: 0; -webkit-transform: translate(-400px, 0); }
+
+.show #games h1 { opacity: 1; -webkit-transition: opacity 1s ease-out .5s; }
+.show #games p { opacity: 1; -webkit-transition: opacity 1s ease-out 1.5s; }
+.show #games #game1 { opacity: 1; -webkit-transform: translate(0, 0); -webkit-transition: all 2.5s ease-in-out 2.5s; }
+.show #games #game2 { opacity: 1; -webkit-transform: translate(0, 0); -webkit-transition: all 2.5s ease-in-out 3s; }
+
+#glow {
+	position: absolute;
+	width: 50px; height: 100%;
+	bottom: 0; left: -40%;
+	background: #fff;
+	z-index: 100;
+	opacity: .8;
+	-webkit-transform: rotate(10deg);
+	pointer-events: none;
+}
+.show #glow {
+	left: 100%; -webkit-transition: all 2s linear 6s; 
+}
+
+#q42logo {
+	position:absolute;
+	bottom:50px;
+	left:50%;
+	width:200px;
+	margin-left:-60px;
+}
+#debug {
+	font-family: 'Tech', 'Arial';
+	
+	position:absolute;
+	bottom:20px;
+	left:20px;
+}
+#debug a {
+	color:#ffffff;
+}

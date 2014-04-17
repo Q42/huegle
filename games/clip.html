@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>API Debug tool</title>
+        <style  type="text/css">
+            body{
+                font-family: verdana;
+                margin: 0px;
+            }
+            h1{
+                margin: 0px;
+                font-size: 20px;
+            }
+            h2{
+                font-size: 16px;
+                margin-top: 20px;
+                color: grey;
+            }
+            #buttons{
+                clear: left;
+            }
+            input{
+                width: 100%;
+            }
+            
+            form{
+                width: 450px;
+                padding: 10px;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+                margin: 10px;
+                font-size: 12px;
+            }
+
+            .formcolumn {
+                float: left;
+                width: auto;
+                // background: #00FF00;
+            }
+            
+            .column25 {
+                float: left;
+                width: 25%;
+            }
+            .column33 {
+                float: left;
+                width: 33%;
+            }
+            .column50 {
+                float: left;
+                width: 50%;
+            }
+            .column66 {
+                float: left;
+                width: 66%;
+            }
+            
+            #commandform{
+                background: #e8e8e8;
+            }
+            
+            #settingsform{
+                background: #cceed9;
+            }
+            
+            #settingsform input{
+                width: auto;
+            }
+            
+            #sequenceform{
+                background: #44dFD9;
+            }
+            
+            #sequenceform input{
+                width: auto;
+            }
+            
+            #presetform{
+                background: #BEFF9B;
+                width: 570px;
+            }
+
+            #presetform .commandblocks {
+
+            }
+            
+            #presetform .commandblocks div {
+                float: left;
+                width: 135px;
+//                margin-left: 0px;
+//                margin-right: 3%;
+                margin: 0px;
+            }
+            
+            .ml {
+                padding-left: 5px;
+            }
+            .mr {
+                padding-right: 5px;
+            }
+
+            #snippetform{
+                background: #7bb44e;
+                width: 570px;
+            }
+
+            #uploadform{
+                background: #247742;
+                width: 570px;
+            }
+
+            textarea{
+                padding-top: 10px;
+                width: 100%;
+                font-family: monaco,monospace;
+                font-size: 12px;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+            }
+
+            .clear{
+                clear: both;
+            }
+            .right {
+                float:right;
+            }
+            .halfbutton {
+//                width: 69px;
+                width: 48%;
+            }
+            .threequarterbutton {
+//                width: 99px;
+                width: 70%;
+            }
+            .smallbutton {
+//                width: 45px;
+                width: 31%;
+            }
+            .verysmallbutton {
+//                width: 33px;
+                width: 25%;
+            }
+            .widebutton {
+//                width: 133px;
+                width: 100%;
+            }
+
+            .doublewidebutton {
+                width: 266px;
+            }
+
+            .triplewidebutton {
+                width: 399px;
+            }
+
+            .tooltip a {
+              text-decoration: none;
+            }
+
+            .tooltip a:link span, .tooltip a:visited span {
+              display: none;
+              cursor:default;
+            }
+
+            .tooltip a:hover {
+              cursor:pointer ;
+            }
+
+            .tooltip a:hover span {
+                position: absolute;
+                margin: 1em 0px 0px -50px;
+                width: 450px;
+                background-color: white;
+                padding: 10px 8px 10px 8px;
+                border: 2px solid #C0C0C0;
+                font: normal 10px/12px verdana, helvetica, arial, sans-serif;
+                color: #000;
+                text-align:left;
+                text-decoration: none;
+                display: block;
+            }
+        </style>
+        <script type="text/javascript" src="js/jq.mobi-1.2.min.js"/></script>
+        
+        <script type="text/javascript" src="js/utils.js"></script>
+    </head>
+
+    <body>
+        <div style="left:0px; position:absolute;"><a href="index.html">Back to Game</a></div>
+        <div style="right:0px; position:absolute;"><a href="preparator.html">Preparator</a></div>
+
+    <div class="formcolumn">
+        <form name="settingsform" id="settingsform">
+            <h1>Settings
+                <div class="tooltip" style="float:right; font-size:small; color: grey">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#" style="color: grey">tokens<span><b>Replacement tokens:</b><br />
+                      The following tokens can be used in messages and URLs and will be replace with the actual values.<br />
+                      <br />
+                      #url# - The URL<br />
+                      #body# - The body<br />
+                      #count# - Message number (when using the x field)<br />
+                      #bridgeid# - Bridge ID field<br />
+                      #bridgeip# - Bridge IP field<br />
+                      #method# - Method used (PUT, GET etc...)<br />
+                    </span></a>                
+                </div>
+            </h1>
+            <br/>
+
+<div class="column33">
+            <div id="divBridgeip">
+                <label>Bridge IP:
+                <input name="bridgeip" type="text" size="16" value="192.168.1.2" />
+                </label>
+            </div>
+            <div id="divBridgeid" style="display:none">
+                <label>Bridge ID:
+                <input name="bridgeid" type="text" size="16" value="001788fffe09b00b" />
+                </label>
+            </div>
+</div>
+<div class="column33">
+            <label title="Check to remotely control your bridge instead of locally. You need to be logged into meethue.com and have started chrome with the following commandline options --allow-file-access-from-files --disable-web-security">
+                <input name="remotecheck" type="checkbox" onchange='updateRemoteAccessUi();' />
+                remote
+            </label>
+            <br />
+            <label title="Show commands that would be sent in the CLIP API Debugger area">
+                <input name="debugcheck" type="checkbox" />
+                debug
+            </label>
+            <br />
+</div>
+<div class="column33">
+            <label title="Check to sequentially send commands through a queue" >
+                <input name="queuecheck" type="checkbox" />
+                <span id="queueLabel">
+                    queue (0)</span>
+            </label>
+            <span title="Click to clear the queue" style="color:red; font-size:10px; cursor: hand; cursor: pointer;" onclick="clearCommandQueue()">clear</span>
+            <br />
+            <label title="Delay after each message from the queue in milliseconds">
+                <input name="queuedelay" type="text" size="5" value="0"  style="display:inline; width:40px" title="Delay after each message from the queue in milliseconds" />
+                queue delay
+            </label>
+            <br />
+</div>
+<div style="clear:both"></div>
+<div>
+            <br/>
+            <label title="Check to remap lampids to the light ids in the list" >
+                <input name="remapcheck" type="checkbox" />remap lamp ids
+            </label>
+            <br />
+            <input name="remapids" id="remapids" type="text" size="80" style="width:100%;" value="3,2,1" title="List of lampids to be remapped. Seperate entries with a comma, ranges are supported. List is based on index, first number is the mapping for lightid 1 etc..."/>
+</div>
+<div style="clear:both"></div>
+
+        </form>
+
+        <form name="commandform" id="commandform">
+            <h1 id="title">CLIP API Debugger</h1>
+            <h2>URL:</h2>
+            <input name="commandurl" type="text" size="60" value="http://192.168.1.2/api/christiaan/" />
+            <div id="buttons">
+                <button type="button" name="buttonGET" onclick="getHTML('GET')">GET</button>
+                <button type="button" name="buttonPUT" onclick="getHTML('PUT')">PUT</button>
+                <button type="button" name="buttonPOST" onclick="getHTML('POST')">POST</button>
+                <button type="button" name="buttonDELETE" onclick="getHTML('DELETE')">DELETE</button>
+
+                <div class="right" style="width: 58px; vertical-align:bottom"><span style="font-size:9px; width:15px; padding-top:20px">x</span><input name="amountToSend" type="text" size="10" value="1" class="right threequarterbutton" /></div>
+            </div>
+            <h2>Message Body:</h2>
+            <textarea name="messagebody" rows="10" cols="100"></textarea>
+            <h2>Command Response:</h2>
+            <textarea name="response" rows="25" cols="100"></textarea>
+        </form>
+    </div>
+
+    <div class="formcolumn">
+        <form name="presetform" id="presetform">
+            <h1>Commands
+                <div class="tooltip" style="float:right; font-size:small; color: grey">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#" style="color: red">INTERNAL USE ONLY<span>
+                      This page is intended for Philips internal use only!<br/>
+                      <br />
+                      This is because it uses features that are not publically available.
+                    </span></a>                
+                </div>    
+            </h1>
+        
+<!--
+            <input 
+                type="range" 
+                min="0"
+                max="255"
+                value="4"
+                style="width:23%"
+                name="transitionTime" />  -->
+
+<div class="commandblocks">
+<div class="mr">
+            <h2>Lights:</h2>
+            <input name="lightids" type="text" size="60" value="1" title="List of light ids entries seperated by comma.&#013;Ranges are supported.&#013;&#013;Example: 1,3,6-10" />
+
+            <input
+                type="button" 
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                document.commandform.messagebody.value
+                )"
+                value="PUT message body" />
+            <input 
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;on&quot;:true}'
+                )"
+                value="On" />
+            <input  
+                type="button" 
+                class="halfbutton right"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;on&quot;:false}'
+                )"
+                value="Off" />
+            <table>
+            <tr>
+            <td>Hue:</td>
+            <td>
+            <input 
+                type="range" 
+                min="0"
+                max="65535"
+                value="0"
+                name="lightsHue"
+                onmouseup="doListCommandWithVar(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;hue&quot;:%}',
+                document.presetform.lightsHue.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+            <td>Bri:</td>
+            <td>
+            <input 
+                type="range" 
+                min="0"
+                max="255"
+                value="127"
+                name="lightsBrightness"
+                onmouseup="doListCommandWithVar(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;bri&quot;:%}',
+                document.presetform.lightsBrightness.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+            <td>Sat:</td>
+            <td>
+            <input 
+                type="range" 
+                min="0"
+                max="255"
+                value="127"
+                name="lightsSaturation"
+                onmouseup="doListCommandWithVar(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;sat&quot;:%}',
+                document.presetform.lightsSaturation.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+            <td>CT:</td>
+            <td>
+            <input 
+                type="range" 
+                min="150"
+                max="500"
+                value="350"
+                name="lightsColortemp"
+                onmouseup="doListCommandWithVar(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;ct&quot;:%}',
+                document.presetform.lightsColortemp.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <input  
+                type="button" 
+                class="smallbutton"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;alert&quot;:&quot;select&quot;}'
+                )"
+                value="sel" />
+            <input  
+                type="button" 
+                class="smallbutton"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;alert&quot;:&quot;lselect&quot;}'
+                )"
+                value="lsel" />
+            <input  
+                type="button" 
+                class="smallbutton"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;alert&quot;:&quot;none&quot;}'
+                )"
+                value="none" />
+
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;effect&quot;:&quot;colorloop&quot;}'
+                )"
+                value="colorloop" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/state', 
+                '{&quot;effect&quot;:&quot;none&quot;}'
+                )"
+                value="none" />
+
+            <input  style="margin-top:28px"  
+                type="button" 
+                onclick="doCommand('POST', '/api/#username#/lights', 
+                ''
+                )"
+                value="Start RLC" />
+            <input  
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#/lights/new', 
+                ''
+                )"
+                value="Get new lights" />
+            <input
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#/lights', 
+                ''
+                )"
+                value="Get lightlist" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.lightids.value, 'GET', '/api/#username#/lights/%', 
+                ''
+                )"
+                value="Get light details" />
+</div>
+<div class="mr ml">
+            <h2>Groups:</h2>
+            <input name="groupids" type="text" size="60" value="0"  title="List of group ids entries seperated by comma.&#013;Ranges are supported.&#013;&#013;Example: 1,3,6-10"/>
+
+            <input
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                document.commandform.messagebody.value
+                )"
+                value="PUT message body" />
+            <input 
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;on&quot;:true}'
+                )"
+                value="On" />
+            <input  
+                type="button" 
+                class="halfbutton right"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;on&quot;:false}'
+                )"
+                value="Off" />
+            <table>
+            <tr>
+            <td>Hue:</td>
+            <td>
+            <input 
+                type="range" 
+                min="0"
+                max="65535"
+                value="0"
+                name="groupsHue"
+                onmouseup="doListCommandWithVar(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;hue&quot;:%}',
+                document.presetform.groupsHue.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+            <td>Bri:</td>
+            <td>
+            <input 
+                type="range" 
+                min="0"
+                max="255"
+                value="127"
+                name="groupsBrightness"
+                onmouseup="doListCommandWithVar(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;bri&quot;:%}',
+                document.presetform.groupsBrightness.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+            <td>Sat:</td>
+            <td>
+            <input 
+                type="range" 
+                min="0"
+                max="255"
+                value="127"
+                name="groupsSaturation"
+                onmouseup="doListCommandWithVar(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;sat&quot;:%}',
+                document.presetform.groupsSaturation.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+            <table>
+            <tr>
+            <td>CT:</td>
+            <td>
+            <input 
+                type="range" 
+                min="150"
+                max="500"
+                value="350"
+                name="groupsColortemp"
+                onmouseup="doListCommandWithVar(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;ct&quot;:%}', 
+                document.presetform.groupsColortemp.value
+                )"/>
+            </td>
+            </tr>
+            </table>
+<!--            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;xy&quot;:[0,0]}'
+                )"
+                value="XY 0,0" /> -->
+            <input  
+                type="button" 
+                class="smallbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;alert&quot;:&quot;select&quot;}'
+                )"
+                value="sel" />
+            <input  
+                type="button" 
+                class="smallbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;alert&quot;:&quot;lselect&quot;}'
+                )"
+                value="lsel" />
+            <input  
+                type="button" 
+                class="smallbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;alert&quot;:&quot;none&quot;}'
+                )"
+                value="none" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;effect&quot;:&quot;colorloop&quot;}'
+                )"
+                value="colorloop" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action', 
+                '{&quot;effect&quot;:&quot;none&quot;}'
+                )"
+                value="none" />
+
+            <input  style="margin-top:28px"
+                type="button" 
+                onclick="doCommandWithVar('POST', '/api/#username#/groups', 
+                '{&quot;name&quot;: &quot;&lt;%&gt;&quot;, &quot;lights&quot;:[' + createQuotedList(document.presetform.lightids.value) + ']}',
+                document.presetform.lightids.value
+                )"
+                value="Create" />
+            <input 
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'DELETE', '/api/#username#/groups/%', 
+                ''
+                )"
+                value="Delete" />
+            <input 
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#/groups', 
+                ''
+                )"
+                value="Get grouplist" />
+            <input 
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'GET', '/api/#username#/groups/%', 
+                ''
+                )"
+                value="Get group details" />
+</div>
+<div class="mr ml">
+            <h2>Schedule:</h2>
+            <input name="scheduleids" type="text" size="60" value="1"  title="List of schedule ids entries seperated by comma.&#013;Ranges are supported.&#013;&#013;Example: 1,3,6-10"/>
+            Delay (min):&nbsp;&nbsp;&nbsp;<input name="scheduledelay" type="text" size="5" value="1" class="smallbutton" />
+
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.lightids.value, 'POST', '/api/#username#/schedules', 
+                '{&quot;name&quot;:&quot;Light % select&quot;,&quot;time&quot;:&quot;' + getTimeWithOffset(60 * document.presetform.scheduledelay.value) + '&quot;,&quot;description&quot;:&quot;Created @ ' + new Date().toTimeString() + '&quot;,&quot;command&quot;:{&quot;method&quot;:&quot;PUT&quot;,&quot;address&quot;:&quot;/api/#username#/lights/%/state&quot;,&quot;body&quot;:{&quot;alert&quot;:&quot;select&quot;}}}'
+                )"
+                value="Create alert select" />
+<!-- Make some space for future schedule features
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.lightids.value, 'POST', '/api/#username#/schedules', 
+                '{&quot;name&quot;:&quot;Light % lselect&quot;,&quot;time&quot;:&quot;' + getTimeWithOffset(60 * document.presetform.scheduledelay.value) + '&quot;,&quot;description&quot;:&quot;Created @ ' + new Date().toTimeString() + '&quot;,&quot;command&quot;:{&quot;method&quot;:&quot;PUT&quot;,&quot;address&quot;:&quot;/api/#username#/lights/%/state&quot;,&quot;body&quot;:{&quot;alert&quot;:&quot;lselect&quot;}}}'
+                )"
+                value="Create alert lselect" />
+-->
+            <input  
+                type="button" 
+                onclick="doCommand('POST', '/api/#username#/schedules', 
+                '{&quot;name&quot;:&quot;Custom msg body&quot;,&quot;time&quot;:&quot;' + getTimeWithOffset(60 * document.presetform.scheduledelay.value) + '&quot;,&quot;description&quot;:&quot;Created @ ' + new Date().toTimeString() + '&quot;,&quot;command&quot;:{&quot;method&quot;:&quot;PUT&quot;,&quot;address&quot;:&quot;' + document.commandform.commandurl.value + '&quot;,&quot;body&quot;:' + document.commandform.messagebody.value + '}}'
+                )"
+                value="URL and msg body" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.scheduleids.value, 'DELETE', '/api/#username#/schedules/%', 
+                ''
+                )"
+                value="Delete" />
+            <input style="margin-top:18px"
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#/schedules', 
+                ''
+                )"
+                value="Get schedulelist" />
+            <input 
+                type="button" 
+                onclick="doListCommand(document.presetform.scheduleids.value, 'GET', '/api/#username#/schedules/%', 
+                ''
+                )"
+                value="Get schedule details" />
+
+            <h2>Pointing:</h2>
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.lightids.value, 'PUT', '/api/#username#/lights/%/pointsymbol', 
+                '{&quot;1&quot;:&quot;320000002A7f000000ff&quot;,&quot;2&quot;:&quot;320000002A007f0000ff&quot;,&quot;3&quot;:&quot;320000002A00007f00ff&quot;,&quot;4&quot;:&quot;140000003f30730000ff&quot;}'
+                ,0
+                )"
+                value="Set pointsymbols" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/transmitsymbol',
+                '{&quot;duration&quot;:'+ document.presetform.transmitsymbolduration.value + ',&quot;symbolselection&quot;:&quot;' + buildTransmitSymbolSelection(document.presetform.lightids.value, 1) + '&quot;}'
+                )"
+                value="Red" accesskey="R" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/transmitsymbol',
+                '{&quot;duration&quot;:'+ document.presetform.transmitsymbolduration.value + ',&quot;symbolselection&quot;:&quot;' + buildTransmitSymbolSelection(document.presetform.lightids.value, 2) + '&quot;}'
+                )"
+                value="Green" accesskey="G" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/transmitsymbol',
+                '{&quot;duration&quot;:'+ document.presetform.transmitsymbolduration.value + ',&quot;symbolselection&quot;:&quot;' + buildTransmitSymbolSelection(document.presetform.lightids.value, 3) + '&quot;}'
+                )"
+                value="Blue" accesskey="B" />
+            <input  
+                type="button" 
+                class="halfbutton"
+                onclick="/*if (confirm(&quot;Are you sure you want to do this?&quot;))*/ doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/transmitsymbol',
+                '{&quot;duration&quot;:'+ document.presetform.transmitsymbolduration.value + ',&quot;symbolselection&quot;:&quot;' + buildTransmitSymbolSelection(document.presetform.lightids.value, 4) + '&quot;}'
+                )"
+                value="Strobo" accesskey="S" />
+            <input name="transmitsymbolduration" class="threequarterbutton" type="range" min="500" max="30000" value="500" step="500" onchange="updateTransmitSymbolDurationLabel()"/>
+            <div id="transmitdurationLabel" class="halfbutton right" style="margin-left:110px; margin-top:-18px"></div>
+</div>
+<div class="ml">
+            <h2>Config:</h2>
+            <input name="username" type="text" size="60" value="christiaan" />
+            <input
+                type="button" 
+                class="halfbutton"
+                onclick="doCommandWithVar('POST', '/api', 
+                '{&quot;devicetype&quot;:&quot;CLIP API Debugger&quot;,&quot;username&quot;:&quot;%&quot;}',
+                document.presetform.username.value
+                )"
+                value="Create" />
+            <input
+                type="button" 
+                class="halfbutton"
+                onclick="doCommandWithVar('DELETE', '/api/%/config/whitelist/%', 
+                '',
+                document.presetform.username.value
+                )"
+                value="Delete" />
+
+            <input style="margin-top:18px"
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#/config', 
+                '')"
+                value="Get config" />
+            <input  
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#', 
+                ''
+                )"
+                value="Get full config" />
+
+            <input style="margin-top:18px"
+                name="ipaddress" title="IP addres" type="text" size="60" value="192.168.1.2" />
+            <input name="gateway" title="Gateway" type="text" size="60" value="192.168.1.1" />
+            <input  
+                type="button" 
+                onclick="doCommand('PUT', '/api/#username#/config', 
+                '{&quot;ipaddress&quot;: &quot;' + document.presetform.ipaddress.value + '&quot;, &quot;netmask&quot;: &quot;255.255.255.0&quot;, &quot;gateway&quot;: &quot;' + document.presetform.gateway.value + '&quot; }'
+                )"
+                value="Set IP + Gateway" />
+
+            <input style="margin-top:18px"
+                type="button" 
+                onclick="doCommand('PUT', '/api/#username#/config', 
+                '{&quot;dhcp&quot;: true}'
+                )"
+                value="DHCP true" />
+            <input  
+                type="button" 
+                onclick="doCommand('PUT', '/api/#username#/config', 
+                '{&quot;dhcp&quot;: false}'
+                )"
+                value="DHCP false" />
+
+                <input style="margin-top:18px"
+                type="button" 
+                onclick="doCommand('PUT', '/api/#username#/config', 
+                '{&quot;portalservices&quot;:true}'
+                )"
+                value="Portalservices true" />
+            <input  
+                type="button" 
+                onclick="doCommand('PUT', '/api/#username#/config', 
+                '{&quot;portalservices&quot;:false}'
+                )"
+                value="Portalservices false" />
+            <input  
+                type="button" 
+                onclick="doCommand('PUT', '/api/#username#/config', 
+                '{&quot;swupdate&quot;:{&quot;updatestate&quot;: 3}}'
+                )"
+                value="Updatestate 3" />
+</div>
+<div style="clear:both"></div>
+<div class="mr">
+            <h2>Scenes:</h2>
+            <input name="scenetag" title="Tag" type="text" size="60" value="SceneTag" />
+            <input name="scenename" title="Name" type="text" size="60" value="Scene name" />
+            <input  
+                type="button" 
+                onclick="doCommandWithVar('PUT', '/api/#username#/scenes/' + document.presetform.scenetag.value,
+                '{&quot;name&quot;:&quot;'+ document.presetform.scenename.value +'&quot;, &quot;lights&quot;:[' + createQuotedList(document.presetform.lightids.value) + ']}'
+                )"
+                value="PUT scene" />
+            <input  
+                type="button" 
+                onclick="doCommand('GET', '/api/#username#/scenes',
+                ''
+                )"
+                value="Get scenes" />
+</div>
+<div class="mr ml">
+            <h2>&nbsp;</h2>
+            <input name="scenetag1" title="Tag" type="text" size="60" value="SceneTag1" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action',
+                '{&quot;scene&quot;:&quot;'+ document.presetform.scenetag1.value +'&quot;}'
+                )"
+                value="1. Recall scene"  accesskey="1" />
+            <input name="scenetag4" title="Tag" type="text" size="60" value="SceneTag4" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action',
+                '{&quot;scene&quot;:&quot;'+ document.presetform.scenetag4.value +'&quot;}'
+                )"
+                value="4. Recall scene"  accesskey="4" />
+</div>
+<div class="mr ml">
+            <h2>&nbsp;</h2>
+            <input name="scenetag2" title="Tag" type="text" size="60" value="SceneTag2" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action',
+                '{&quot;scene&quot;:&quot;'+ document.presetform.scenetag2.value +'&quot;}'
+                )"
+                value="2. Recall scene"  accesskey="2" />
+            <input name="scenetag5" title="Tag" type="text" size="60" value="SceneTag5" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action',
+                '{&quot;scene&quot;:&quot;'+ document.presetform.scenetag5.value +'&quot;}'
+                )"
+                value="5. Recall scene"  accesskey="5" />
+</div>
+<div class="ml">
+            <h2>&nbsp;</h2>
+            <input name="scenetag3" title="Tag" type="text" size="60" value="SceneTag3" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action',
+                '{&quot;scene&quot;:&quot;'+ document.presetform.scenetag3.value +'&quot;}'
+                )"
+                value="3. Recall scene"  accesskey="3" />
+            <input name="scenetag6" title="Tag" type="text" size="60" value="SceneTag6" />
+            <input  
+                type="button" 
+                onclick="doListCommand(document.presetform.groupids.value, 'PUT', '/api/#username#/groups/%/action',
+                '{&quot;scene&quot;:&quot;'+ document.presetform.scenetag6.value +'&quot;}'
+                )"
+                value="6. Recall scene"  accesskey="6" />
+</div>
+
+
+</div> <!-- commandblocks -->
+<div style="clear:both"></div>
+        </form>
+        
+        <div style="clear:both"></div>
+        
+        <form name="snippetform" id="snippetform">
+            <h1>Snippets:</h1>
+            <br/>
+            <textarea name="snippets" rows="14" cols="100"></textarea>
+        </form>
+
+        <form id="uploadform" name="uploadform" enctype="multipart/form-data" method="post">
+            <h1>Firmware:</h1>
+            <br />
+            <input name="firmwarefile" type="file" style="background:white" />
+            <input class="halfbutton" type="button" value="Update" onclick="sendUploadFileForm()" />
+            <span id="uploadresult" ></span>
+        </form>
+
+    </div>
+
+    <div class="formcolumn">
+        <form name="sequenceform" id="sequenceform">
+            <h1>Sequencer</h1>
+            <br />
+<div class="column50">
+            <label title="Check to keep looping through the sequence. Make sure it has a delay!!!">
+                <input name="loopcheck" type="checkbox" />
+                loop
+            </label>
+            <br />
+            <label title="Check to use the timestamps to manage the timing of the sequencer queue.">
+                <input name="timestampcheck" type="checkbox" />
+                use timestamps
+            </label>
+            <br/>
+</div>
+<div class="column50">
+            <input  
+                type="button" 
+                onclick="sequenceAddDelay(parseInt(document.sequenceform.delay.value))"
+                value="Add delay" />
+            <input name="delay" type="text" size="10" value="1000" class="smallbutton" />
+            <br />
+            <label title="Check to record everything that is sent to the bridge and add it to the sequence.">
+                <input name="recordcheck" type="checkbox" />
+                record
+            </label>
+            <br/>
+<!--            Multiply delay:
+            <input 
+                type="range" 
+                min="0.001"
+                max="1000"
+                value="1"
+                name="delaymodifier" />
+            <br />-->
+</div>
+<div class="clear"></div>
+<br/>
+            <input  
+                type="button" 
+                onclick="sequenceExecuteStart()"
+                value="Start" />
+            <input  
+                type="button" 
+                onclick="sequenceExecuteStop()"
+                value="Stop" />
+            <input  
+                type="button" 
+                onclick="sequenceClear()"
+                value="Clear" />
+            <span id="sequenceRunningLabel"></span>
+
+                
+<div class="clear"></div>
+<br/>
+            <input name="sequencename" type="text" size="48" value="SequenceName" class="threequarterbutton"/>
+            <input  
+                type="button" 
+                onclick="sequenceSave(document.sequenceform.sequencename.value)"
+                value="Save" />
+                <br />
+                
+            <select
+                id="savedsequencelist"
+                name="savedsequencelist"
+                class="threequarterbutton"
+            >
+            </select>
+            <input  
+                type="button" 
+                onclick="sequenceLoad(document.sequenceform.savedsequencelist.value)"
+                value="Load" />
+            <input  
+                type="button" 
+                onclick="sequenceDelete(document.sequenceform.savedsequencelist.value)"
+                value="Delete" />
+
+                
+<br/>
+            <br />
+            <textarea name="commandlist" rows="40" cols="100" onblur="sequenceUpdateFromText(document.sequenceform.commandlist.value)"></textarea>
+        </form>
+    </div>
+    
+    <div class="clear">
+        Last loaded on: <script type="text/javascript">document.write(new Date());</script>
+    </div>
+
+<script type="text/javascript">
+
+var keepResponses = 0;
+
+var commandQueue = [];
+var commandQueueRunning = false;
+//var commandQueueDelay = 1000;
+var commandQueueTimer = null;
+
+
+// this is simply a shortcut for the eyes and fingers
+function getHTML(command)
+{
+    clearLog();
+
+    var numLoops = document.commandform.amountToSend.value;
+
+    for (var i=0; i<numLoops; i++)
+    {
+        var url = document.commandform.commandurl.value.replace(/#count#/g, i+1);
+        var body = document.commandform.messagebody.value.replace(/#count#/g, i+1);
+        
+        executeCommand(command, url, body);
+    }
+    
+    return false;
+}
+
+
+function executeCommand(method, url, body)
+{
+    // if it starts with http:// it should be a complete address,
+    // otherwise assume the bridgeIp from the settings should be used.
+    if ((url.indexOf("http://") != 0) && (url.indexOf("https://") != 0))
+    {
+        url = 'http://' + document.settingsform.bridgeip.value + url;
+    }
+
+    // Fill in the username from the form
+    url = url.replace(/#username#/g, document.presetform.username.value);
+    body = body.replace(/#username#/g, document.presetform.username.value);
+
+    var apiUrlPart = url;
+
+    // Remote overrides normal URLs
+    if (document.settingsform.remotecheck.checked)
+    {
+         apiUrlPart = url.substring(url.indexOf("/api"));
+
+        url = "https://www.meethue.com/en-US/user/sendMessageToBridge?clipmessage=%7B%22bridgeId%22%3A%22#bridgeid#%22%2C%22clipCommand%22%3A%7B%22url%22%3A%22#url#%22%2C%22method%22%3A%22#method#%22%2C%22body%22%3A"+encodeURIComponent(body)+"%7D%7D";
+        body = "";
+    }
+
+    // Fill in all the available tokens
+    url = url.replace(/#bridgeid#/g, document.settingsform.bridgeid.value);
+    url = url.replace(/#bridgeip#/g, document.settingsform.bridgeip.value);
+// OK, lets not replace #url# with itself        url = url.replace(/#url#/g, encodeURIComponent(apiUrlPart));
+    url = url.replace(/#method#/g, method);
+    url = url.replace(/#body#/g, encodeURIComponent(body));
+
+    body = body.replace(/#bridgeid#/g, document.settingsform.bridgeid.value);
+    body = body.replace(/#bridgeip#/g, document.settingsform.bridgeip.value);
+    body = body.replace(/#url#/g, encodeURIComponent(apiUrlPart));
+    body = body.replace(/#method#/g, method);
+// OK, lets not replace #body# with itself    body = body.replace(/#body#/g, encodeURIComponent(body));
+
+    // For debugging show everything that would be sent in the "normal" command fields
+    if (document.settingsform.debugcheck.checked)
+    {
+//        alert(method + "\n" + url + "\n" + body);
+        document.commandform["button" + method].focus();  // This might make the brower jump up, but it is only when debug is enabled so probably no issue
+        document.commandform.commandurl.value = url;
+        document.commandform.messagebody.value = body;
+        
+        if (body.length > 0)
+        {
+            try
+            {
+                document.commandform.response.value = JSON.stringify(JSON.parse(body), null, '\t');
+                //appendLog(JSON.stringify(JSON.parse(body), null, '\t'));
+            }
+            catch(err)
+            {
+                document.commandform.response.value = err.message;
+                //appendLog(err.message);
+            }
+        }
+        return;
+    }
+    
+    if (document.settingsform.queuecheck.checked)
+    {
+        if (!commandQueueRunning)
+        {
+            // Say that the queue is running so that the queue will be checked on the response
+            commandQueueRunning = true;
+            sendHttpCommand(method, url, body);
+        }
+        else
+        {
+            // Queue is busy, add it
+            commandQueue.push({"method":method, "url":url, "body":body});
+            updateCommandQueueStatus();
+        }
+    }
+    else
+    {
+        // Just send the command imediately, no queue
+        sendHttpCommand(method, url, body);
+    }
+    return false;
+}
+
+
+// The actual sending of the HTTP command, no additional logic in here
+function sendHttpCommand(method, url, body)
+{
+    // Hook to record all commands that are sent
+    // Record before remapping to avoid recording wrong ID's
+    if (!sequenceExecuting)  // Don't record when executing!!
+    {
+        sequenceAddCommand(method, url, body);
+    }
+
+    // Low level light ID remapping (the functions both check if actual remapping is needed)
+    remapped = false;
+    url = remapUrlIds(url);
+    body = remapBodyIds(body);
+    
+    if (remapped)
+    {
+        // Blink the control as a reminder that remapping is on. I forget this too often
+        blinkRemapControl();
+    }
+
+//    console.log(url);
+//    console.log(body);
+
+    
+    var http = new XMLHttpRequest();
+//        alert(method + ", " + url + ", " +  body);
+
+    http.open(method, url, true);
+    http.myurl = url;
+
+    http.onreadystatechange = function()
+    {
+        if (http.readyState == 4)
+        {
+            //document.commandform.response.value += http.myurl;
+            //document.commandform.response.value += "\n";
+            appendLog(http.myurl);
+            appendLog("\n");
+                
+            if (http.status==200)
+            {
+                try
+                {
+                    ////document.commandform.response.value+="Bad JSON: "+http.responseText
+                    //document.commandform.response.value += JSON.stringify(JSON.parse(http.responseText), null, '\t');
+                    //document.commandform.response.value += "\n";
+                    appendLog(JSON.stringify(JSON.parse(http.responseText), null, '\t'));
+//                    appendLog(JSON.parse(http.responseText));
+                }
+                catch(err)
+                {
+                    appendLog("JSON.parse or JSON.stringify error: " + err.message);
+                    appendLog("\n");
+                    appendLog("Message that caused the error:");
+                    appendLog("\n");
+                    appendLog(http.responseText);
+                }
+
+                appendLog("\n");
+            }
+            else
+            {
+                //document.commandform.response.value += "Error " + http.status
+                appendLog("Error " + http.status);
+            }
+
+            if (commandQueue.length > 0)
+            {
+                if (document.settingsform.queuedelay.value > 0)
+                {
+                    // Send command delayed
+                    commandQueueTimer = setTimeout(CommandQueueTimerExpired, document.settingsform.queuedelay.value);
+                }
+                else
+                {
+                    // Immediately send the command
+                    var command = commandQueue.shift();
+                    sendHttpCommand(command.method, command.url, command.body);
+                }
+            }
+            else
+            {
+                // Done with the queue
+                commandQueueRunning = false;
+                showLog();
+            }
+
+            updateCommandQueueStatus();
+        }
+    }
+    http.send(body);
+}
+
+
+// Send the data from the Updater form, note this goes completely past the queue
+// From: https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData/Using_FormData_Objects
+function sendUploadFileForm() {
+  var oOutput = document.getElementById("uploadresult");
+  var oData = new FormData(document.forms.namedItem("uploadform"));
+ 
+  oOutput.innerHTML = "";
+
+  var oReq = new XMLHttpRequest();
+
+  oReq.open("POST",  "http://" + document.settingsform.bridgeip.value + "/updater", true);
+  oReq.onload = function(oEvent) 
+  {
+    if (oReq.status == 200) 
+    {
+      oOutput.innerHTML = oReq.responseText;
+    } 
+    else 
+    {
+      oOutput.innerHTML = "Error " + oReq.status + " occurred uploading your file.";
+    }
+  };
+ 
+  oOutput.innerHTML = "Sending firmware upgrade image";
+
+  oReq.send(oData);
+}
+
+
+function clearCommandQueue()
+{
+    clearTimeout(commandQueueTimer);
+    while (commandQueue.shift()){}
+
+    updateCommandQueueStatus();
+    commandQueueRunning = false;
+}
+
+
+function updateCommandQueueStatus()
+{
+    document.getElementById('queueLabel').innerHTML = "queue ("+commandQueue.length+")";
+}
+
+
+function getItemsFromRange(range)
+{
+    var items = new Array();
+    var start = -1;
+    var value = "";
+    
+    for (var i=0; i<range.length; i++)
+    {
+        switch (range[i])
+        {
+            case '-':
+                if (value == "")
+                {
+                    start = 1;
+                }
+                else
+                {
+                    start = parseInt(value);
+                }
+                value = "";
+                break;
+            case ',':
+                if (value != "")
+                {
+                    if (start == -1)
+                    {
+                        items.push(parseInt(value));
+                    }
+                    else
+                    {
+                        // Its a range, add all
+                        if (start < parseInt(value))
+                        {
+                            for (var id = start; id <= parseInt(value); id++)
+                            {
+                                items.push(id);
+                            }
+                        }
+                        else
+                        {
+                            for (var id = start; id >= parseInt(value); id--)
+                            {
+                                items.push(id);
+                            }
+                        }
+                    }
+                }
+
+                start = -1;
+                value = "";
+                break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '0':
+                value += range[i];
+                break;
+            default:
+                // bad char, just ignore for now.
+                break;
+        }
+    }
+
+    if (value != "")
+    {
+        if (start == -1)
+        {
+            items.push(parseInt(value));
+        }
+        else
+        {
+            // Its a range, add all
+            if (start < parseInt(value))
+            {
+                for (var id = start; id <= parseInt(value); id++)
+                {
+                    items.push(id);
+                }
+            }
+            else
+            {
+                for (var id = start; id >= parseInt(value); id--)
+                {
+                    items.push(id);
+                }
+            }
+        }
+    }
+
+    return items;
+}
+
+function doListCommand(list, method, url, body, delay)
+{
+    var listItems = getItemsFromRange(list); 
+
+    clearLog();
+
+    for (var i = 0; i < listItems.length; i++) 
+    {
+//        alert(listItems[i]);
+
+        var urlNew = url.replace(/%/g, listItems[i]);
+        var bodyNew = body.replace(/%/g, listItems[i]);
+
+        executeCommand(method, urlNew, bodyNew);
+        if (delay) sleep(delay);
+    }
+
+    return false;
+}
+
+
+// % is replaced with bodyvar
+function doListCommandWithVar(list, method, url, body, bodyvar, delay)
+{
+    var listItems = getItemsFromRange(list); 
+    var bodyNew = body.replace(/%/g, bodyvar);
+
+    clearLog();
+
+    for (var i = 0; i < listItems.length; i++) 
+    {
+//        alert(listItems[i]);
+
+        var urlNew = url.replace(/%/g, listItems[i]);
+
+        executeCommand(method, urlNew, bodyNew);
+        if (delay) sleep(delay);
+    }
+
+    return false;
+}
+
+
+function doCommand(method, url, body)
+{
+    clearLog();
+    executeCommand(method, url, body);
+}
+
+
+// % is replaced with "vari"
+function doCommandWithVar(method, url, body, vari)
+{
+    var urlNew = url.replace(/%/g, vari);
+    var bodyNew = body.replace(/%/g, vari);
+
+    clearLog();
+    executeCommand(method, urlNew, bodyNew);
+}
+
+
+function createQuotedList(list)
+{
+    var listItems = getItemsFromRange(list); 
+    var quotedListItems = "";
+
+    for (var i = 0; i < listItems.length; i++) 
+    {
+        if (i > 0)
+        {
+            quotedListItems += ', ';
+        }
+        quotedListItems += '"' + listItems[i] + '"';
+    }
+
+    return quotedListItems;
+}
+
+
+// Offset is in seconds
+function getTimeWithOffset(offset)
+{
+    var d = new Date(); 
+    d.setTime(d.getTime() + offset * 1000)
+
+// Not sure what to use, both seem to work
+//    var n = d.toISOString(); 
+    var n = d.toJSON(); 
+
+    // Cut the part that the bridge accepts
+    var matches = n.match(/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d/);    
+
+    if (matches)
+    {
+        n = matches[0];
+    }
+
+    return n;
+}
+
+
+function buildTransmitSymbolSelection(list, symbolId) 
+{
+    var listItems = getItemsFromRange(list); 
+    var symbolSelection = "0101";
+
+    if (listItems.length > 17)
+    {
+        alert("Too many lights for 1 transmitsymbol!");
+    }
+
+    numLampSymbolPairs = listItems.length.toString(16);
+    if (numLampSymbolPairs.length == 1)
+    {
+        numLampSymbolPairs = "0" + numLampSymbolPairs;
+    }
+    symbolSelection += numLampSymbolPairs;
+
+    for (var i = 0; i < listItems.length; i++) 
+    {
+        lampId = listItems[i].toString(16);
+        if (lampId.length == 1)
+        {
+            lampId = "0" + lampId;
+        }
+
+        symbolSelection += "0" + symbolId + lampId;
+    }
+
+    return symbolSelection;
+}
+
+
+function CommandQueueTimerExpired()
+{
+    if (commandQueue.length > 0)
+    {
+        var command = commandQueue.shift();
+        sendHttpCommand(command.method, command.url, command.body);
+    }
+    else
+    {
+        // Done with the queue
+        commandQueueRunning = false;
+        showLog();
+    }
+
+    updateCommandQueueStatus();
+}
+
+
+// --- Form (re)store feature ---
+
+function saveFormContents()
+{
+    // Only when local storage is supported by browser
+    if (typeof(localStorage) != 'undefined' ) 
+    {
+        for (var formIdx=0; formIdx < document.forms.length; formIdx++)
+        {
+            var form = document.forms[formIdx];
+            
+            for (var elementIdx = 0; elementIdx < form.elements.length; elementIdx++)
+            {
+                var element = form.elements[elementIdx];
+                
+                // Only store relevant stuff
+                if (element.type == 'text'
+                     || element.type == 'textarea'
+                     || element.type == 'range'
+                     )
+                {
+                    localStorage.setItem(form.name + '|' + element.name, element.value);
+                }
+
+                if (element.type == 'checkbox')
+                {
+                    localStorage.setItem(form.name + '|' + element.name, element.checked?"true":"false");
+                }
+
+                console.log("el:" + element.name + ":" + element.value);
+
+                // store ip address in cookie too for other html files to use
+                if (element.name == 'ipaddress') 
+                {
+                    alert(element.value);
+                    Utils.setCookie('bridgeIP', element.value);
+                }
+            }
+        }
+    }
+}
+
+
+function restoreFormContents()
+{
+    // Only when local storage is supported by browser
+    if (typeof(localStorage) != 'undefined' ) 
+    {
+        for (var formIdx=0; formIdx < document.forms.length; formIdx++)
+        {
+            var form = document.forms[formIdx];
+            
+            for (var elementIdx = 0; elementIdx < form.elements.length; elementIdx++)
+            {
+                var element = form.elements[elementIdx];
+                var tmpValue = localStorage.getItem(form.name + '|' + element.name);
+
+                if (tmpValue) 
+                {
+                    if (element.type == 'checkbox')
+                    {
+                        document.forms[formIdx].elements[elementIdx].checked = tmpValue=="true"?true:false;
+                    }
+                    else
+                    {
+                        if (element.type != 'button') // To avoid problems when buttons are stored by accident
+                        {
+                            document.forms[formIdx].elements[elementIdx].value = tmpValue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// --- Log related stuff ---
+
+var log = "";
+var liveUpdateLog = false;
+
+function clearLog()
+{
+    document.commandform.response.value = "";
+    log = "";
+}
+
+function appendLog(text)
+{
+    if (liveUpdateLog)
+    {
+        document.commandform.response.value += text;
+    }
+    log += text;
+}
+
+function showLog()
+{
+    document.commandform.response.value = log;
+}
+
+// --- Sleepy stuff ---
+
+// Hack never use this in real programs since it is busy wait!!!
+function sleep(millis) {sleepReal(millis)}
+
+function sleepFake(millis) {}
+
+function sleepReal(millis)
+{
+  var date = new Date();
+  var curDate = null;
+  do { curDate = new Date(); }
+  while(curDate-date < millis);
+}
+
+// --- UI updating related stuff ---
+
+function updateRemoteAccessUi()
+{
+    if (document.settingsform.remotecheck.checked)
+    {
+        document.getElementById("divBridgeip").style.display = "none";
+        document.getElementById("divBridgeid").style.display = "block";
+    }
+    else
+    {
+        document.getElementById("divBridgeip").style.display = "block";
+        document.getElementById("divBridgeid").style.display = "none";
+    }
+}
+
+function updateTransmitSymbolDurationLabel()
+{
+    document.getElementById('transmitdurationLabel').innerHTML = + parseFloat(document.presetform.transmitsymbolduration.value)/1000;
+}
+
+
+
+var blinkRemapControlTimer = null;
+var blinkRemapControlTimerDelay = 100;
+var blinkRemapControlDuration = 1000;
+var blinkRemapControlTimerCount = 0;
+var blinkRemapControlColorStart = '#FFA500';
+var blinkRemapControlColorEnd = '#FFFFFF';
+
+function blinkRemapControlAnimator()
+{
+    // Fades RGB values to #FFFFFF
+    blinkRemapControlTimerCount += blinkRemapControlTimerDelay;
+    
+    if (blinkRemapControlTimerCount < blinkRemapControlDuration)
+    {
+        var color = document.getElementById("remapids").style.backgroundColor;
+        var rStart = parseInt(blinkRemapControlColorStart.substr(1,2) , 16);
+        var gStart = parseInt(blinkRemapControlColorStart.substr(3,2) , 16);
+        var bStart = parseInt(blinkRemapControlColorStart.substr(5,2) , 16);
+        var rEnd = parseInt(blinkRemapControlColorEnd.substr(1,2) , 16);
+        var gEnd = parseInt(blinkRemapControlColorEnd.substr(3,2) , 16);
+        var bEnd = parseInt(blinkRemapControlColorEnd.substr(5,2) , 16);
+        
+        var progress = blinkRemapControlTimerCount / blinkRemapControlDuration;
+        
+        var r = Math.round(rStart + ((rEnd - rStart) * progress )).toString(16);
+        var g = Math.round(gStart + ((gEnd - gStart) * progress )).toString(16);
+        var b = Math.round(bStart + ((bEnd - bStart) * progress )).toString(16);
+        
+        if (r.length == 1) { r = "0" + r; }
+        if (g.length == 1) { g = "0" + g; }
+        if (b.length == 1) { b = "0" + b; }
+
+        
+        document.getElementById("remapids").style.backgroundColor = "#" + r + g + b;
+    }
+    else
+    {
+        // Done
+        document.getElementById("remapids").style.backgroundColor = blinkRemapControlColorEnd;
+        clearInterval(blinkRemapControlTimer);
+        blinkRemapControlTimer = null;
+    }
+}
+
+function blinkRemapControl()
+{
+    if (blinkRemapControlTimer == null)
+    {
+        document.getElementById("remapids").style.backgroundColor = blinkRemapControlColorStart;
+        blinkRemapControlTimerCount = 0;
+        blinkRemapControlTimer = setInterval(blinkRemapControlAnimator, blinkRemapControlTimerDelay);
+    }
+}
+
+// ---  Remapping ---
+
+var remapped = false; // This is set to true if something was remapped by the remapXxx functions. Need to set to false manually before calling those functions
+
+
+// This function will return the ID from the mapping.
+// ID's outside the range will be just returned as unmapped
+// Range is an array that has the desired ID for each given index where index 0 contains the mapped ID for light 1!
+function remapGetMappedIdFromRange(id, range)
+{
+    if (id > range.length)
+    {
+        return id;
+    }
+
+    return range[id-1];
+}
+
+function remapUrlIds(url)
+{
+    if (!document.settingsform.remapcheck.checked) return url;
+    
+    var range = getItemsFromRange(document.settingsform.remapids.value);
+
+    // Only lights in an URL that need remapping
+    var matches = url.match(/\/lights\/(\d+)/);
+    if (matches)
+    {
+        url = url.replace(/lights\/(\d+)/, "lights/" + remapGetMappedIdFromRange(parseInt(matches[1]), range));
+        remapped = true;
+    }
+    
+    return url;
+}
+
+function remapBodyIds(body)
+{
+    if (!document.settingsform.remapcheck.checked) return body;
+    if (body.length <= 1) return body;
+
+    var bodyObj = JSON.parse(body);
+
+    var range = getItemsFromRange(document.settingsform.remapids.value);
+    
+    // Rework transmitsymbols
+    if (bodyObj.symbolselection)
+    {
+        // Just copy the first 2 dummies and the count (since it does not change)
+        var newSymbolSelection = bodyObj.symbolselection.substr(0,6);
+        
+        for(var offset=6; offset<bodyObj.symbolselection.length; offset +=4)
+        {
+            var lampidStr = bodyObj.symbolselection.substr(offset+2, 2);
+            var lampid = remapGetMappedIdFromRange(parseInt(lampidStr, 16), range);
+            
+            lampidStr = lampid.toString(16);
+            if (lampidStr.length == 1)
+            {
+                lampidStr = "0" + lampidStr;
+            }
+            
+            newSymbolSelection += bodyObj.symbolselection[offset] + bodyObj.symbolselection[offset+1] + lampidStr;
+        }
+        
+        bodyObj.symbolselection = newSymbolSelection;
+        remapped = true;
+    }
+
+    // Lights remapping (groups/scenes)
+    if (bodyObj.lights)
+    {
+        var newLights = [];
+        
+        for (var i=0; i<bodyObj.lights.length; i++)
+        {
+            var lampid = remapGetMappedIdFromRange(parseInt(bodyObj.lights[i], 10), range);
+            newLights.push(lampid.toString());
+        }
+        bodyObj.lights = newLights;
+        remapped = true;
+    }
+
+    // Schedule command remapping
+    if (bodyObj.command)
+    {
+        if (bodyObj.command.address)
+        {
+            bodyObj.command.address = JSON.parse(remapUrlIds(JSON.stringify(bodyObj.command.address)));
+        }
+
+        if (bodyObj.command.body)
+        {
+            bodyObj.command.body = JSON.parse(remapBodyIds(JSON.stringify(bodyObj.command.body)));
+        }
+    }
+
+    return JSON.stringify(bodyObj);
+}
+
+
+// --- Sequence functionality ---
+
+var sequenceQueue = [];
+var sequenceQueueTimer = null;
+
+var sequenceExecuting = false;
+var sequenceExecIdx = 0;
+var sequenceExecMode = "normal";
+var sequenceQueueDelayBackup = 0;
+
+// Sequence storage is a list of objects with a name and commandlist
+var sequenceStorage = [];
+
+function sequenceInit()
+{
+    // Check if something is in the form. If so then use it
+    if (document.sequenceform.commandlist.value != "")
+    {
+        sequenceQueue = JSON.parse(document.sequenceform.commandlist.value);
+    }
+    
+    // Get saved sequences from local storage
+    if (typeof(localStorage) != 'undefined' ) 
+    {
+        var tmpValue = localStorage.getItem("sequences");
+        
+        if (tmpValue)
+        {
+            sequenceStorage = JSON.parse(tmpValue);
+        }
+    }
+
+    sequenceUpdateUi();
+}
+
+function sequenceStoreSequencesToLocalStorage()
+{
+    // Get saved sequences from local storage
+    if (typeof(localStorage) != 'undefined' ) 
+    {
+        localStorage.setItem("sequences", JSON.stringify(sequenceStorage));
+    }
+}
+
+function sequenceSave(name)
+{
+    var sequence;
+    
+    for (var i=0; i<sequenceStorage.length; i++)
+    {
+        if (sequenceStorage[i].name == name)
+        {
+            sequence = sequenceStorage[i];
+            break;
+        }
+    }
+    
+    if (!sequence)
+    {
+        var newIdx = sequenceStorage.push({"name":name});
+        sequence = sequenceStorage[i];
+    }
+    
+    sequence.commandlist = sequenceQueue;
+    
+    // Persist
+    sequenceStoreSequencesToLocalStorage();
+    
+    sequenceUpdateUi();
+}
+
+function sequenceLoad(name)
+{
+    var sequence;
+    
+    for (var i=0; i<sequenceStorage.length; i++)
+    {
+        if (sequenceStorage[i].name == name)
+        {
+            sequence = sequenceStorage[i];
+            break;
+        }
+    }
+    
+    if (!sequence)
+    {
+        alert("Unknown sequence name: " + name);
+    }
+    else
+    {
+        document.sequenceform.sequencename.value = sequence.name;  // should not update UI here
+        sequenceQueue = sequence.commandlist;
+        sequenceUpdateUi();
+    }
+}
+
+function sequenceDelete(name)
+{
+    var found = false;
+    
+    for (var i=0; i<sequenceStorage.length; i++)
+    {
+        if (sequenceStorage[i].name == name)
+        {
+            sequenceStorage.splice(i,1);
+            found = true;
+
+            // Persist
+            sequenceStoreSequencesToLocalStorage();
+
+            sequenceUpdateUi();
+            break;
+        }
+    }
+    
+    if (!found)
+    {
+        alert("Invalid sequence name: " + name);
+    }
+}
+
+function sequenceAddCommand(method, url, body)
+{
+    if (!document.sequenceform.recordcheck.checked) return;
+    
+    var command = {};
+    command.type = "clip";
+    command.method = method;
+    command.url = url.match(/\/api\/[^\/]+(.*)/)[1];  // Strip http://ip/api/username so we can easily playback on other bridges/users
+    command.body = JSON.parse(body);   // A string is incoming. For better display and manual editing, make it an actual object
+                                       // Note that this WILL break on invalid JSON (like the +1000 for hue, sat etc...)
+    command.timestamp = Date.now();
+    
+    sequenceQueue.push(command);
+    
+    sequenceUpdateUi();
+}
+
+function sequenceAddDelay(delay)
+{
+    var command = {};
+    command.type = "delay";
+    command.value = delay;
+    //command.timestamp = Date.now();
+    
+    sequenceQueue.push(command);
+    
+    sequenceUpdateUi();
+}
+
+function sequenceClear()
+{
+    sequenceQueue = [];
+    sequenceUpdateUi();
+}
+
+function sequenceUpdateFromText(text)
+{
+    try
+    {
+        if (text == "")
+        {
+            text = "[]";
+        }
+        sequenceQueue = JSON.parse(text);
+        sequenceUpdateUi();   
+    }
+    catch(err)
+    {
+        alert("An error occured when parsing the sequence!\n\n" + err.message);
+    }
+}
+
+function sequenceExecuteStart()
+{
+    // Only when not already executing
+    if (sequenceExecuting) return;
+
+    clearLog();
+
+    // Sanity check to avoid browser hangup when LOOP is set and there is no delay
+    if (document.sequenceform.loopcheck.checked)
+    {
+        var delayCount = 0;
+        for (var i=0; i < sequenceQueue.length; i++)
+        {
+            var command = sequenceQueue[i];
+            if (command.type == "delay")
+            {
+                delayCount++;
+            }
+        }    
+        
+        if (delayCount == 0 && !document.sequenceform.timestampcheck.checked)  // Check is not relevant for timestampd mode
+        {
+            alert("WARNING\n\nThere was no delay in your sequence and you wanted to loop. This would result in a hangup of your browser, but I saved you :-)\n\nPlease add a delay, use timestamp based playback or disable the loop.");
+            return;
+        }
+        
+        if (sequenceQueue.length <= 1)
+        {
+            alert("WARNING\n\nThere is only 1 command on the sequence. Looping will cause a hangup. Add more commands.");
+            return;        
+        }
+    }
+
+    sequenceExecMode = "normal";
+    sequenceExecuting = true;
+    sequenceExecIdx = 0;
+
+    if (document.sequenceform.timestampcheck.checked)
+    {
+        sequenceExecMode = "timestamp";
+        sequenceQueueDelayBackup = document.settingsform.queuedelay.value;
+        document.settingsform.queuedelay.value = 0;
+    }
+
+    sequenceUpdateUi();   
+    sequenceExecuteCommand();
+}
+
+function sequenceExecuteStop()
+{
+    // Only when already executing
+    if (!sequenceExecuting) return;
+
+    clearTimeout(sequenceQueueTimer);
+    sequenceExecIdx = 0;
+    sequenceExecuting = false;
+    
+    if (sequenceExecMode == "timestamp")
+    {
+        document.settingsform.queuedelay.value = sequenceQueueDelayBackup;
+    }
+
+    sequenceUpdateUi();   
+}
+
+// Keeps executing commands from the queue until done or it has to wait for something
+// in which case it will be triggered after it
+function sequenceExecuteCommand()
+{
+    if (!sequenceExecuting) return;
+    
+    var leaveLoop = false;
+    
+    while ((sequenceExecIdx < sequenceQueue.length) && !leaveLoop && sequenceExecuting)
+    {
+        var command = sequenceQueue[sequenceExecIdx];
+        
+        if (command.type == "delay")
+        {
+            var delayModifier = 1; //parseFloat(document.sequenceform.delaymodifier.value);
+            var delayValue = command.value * delayModifier;
+            sequenceQueueTimer = setTimeout(sequenceExecuteCommand, delayValue);
+            leaveLoop = true;  // leave this loop because of the executing delay
+        }
+        if (command.type == "clip")
+        {
+            // Note that this will go through the normal command processing and therefore receive
+            // #token# substitution and queue handling. Not sure if that is always desired, but lets leave it for now.
+            executeCommand(command.method, "http://#bridgeip#/api/#username#"+command.url, JSON.stringify(command.body));
+        }
+        
+        // Next
+        var nextSequenceExecIdx = sequenceExecIdx + 1;
+        if (nextSequenceExecIdx == sequenceQueue.length)
+        {
+            // Sequence is finished
+            if (document.sequenceform.loopcheck.checked)
+            {
+                nextSequenceExecIdx = 0;
+                clearLog(); // Clear the log every cycle to avoid getting to big
+            }
+            else
+            {
+                sequenceExecuteStop();
+            }
+        }  
+
+        // Timestamp based playback
+        if (sequenceExecuting 
+                && sequenceExecMode == "timestamp" 
+                && !leaveLoop) // Leaveloop is to ignore timestamp handling on delays (those were recorded in earlier versions)
+        {
+            var delayValue = 0;
+
+            if (sequenceQueue[sequenceExecIdx].timestamp && sequenceQueue[nextSequenceExecIdx].timestamp)
+            {
+                delayValue = sequenceQueue[nextSequenceExecIdx].timestamp - sequenceQueue[sequenceExecIdx].timestamp;
+                if (delayValue < 0) { delayvalue = 0;}  // Should only happen on a wrap around
+            }
+            console.log(delayValue);
+            sequenceQueueTimer = setTimeout(sequenceExecuteCommand, delayValue);
+           
+            leaveLoop = true;  // leave this loop because of the executing delay
+        }
+
+        sequenceExecIdx = nextSequenceExecIdx;
+    }
+}
+
+function sequenceUpdateUi()
+{
+    document.sequenceform.commandlist.value = JSON.stringify(sequenceQueue, null, '\t');
+    
+    var savedsequencelist = document.getElementById('savedsequencelist');
+    savedsequencelist.options.length = 0;
+    
+    for (var i=0; i<sequenceStorage.length; i++)
+    {
+        var newOption = document.createElement("option");
+        newOption.text = sequenceStorage[i].name;
+        newOption.value = sequenceStorage[i].name;
+
+        savedsequencelist.options.add(newOption);
+    }
+    
+    document.getElementById('sequenceRunningLabel').innerHTML = sequenceExecuting?"running":"";
+}
+
+
+// --- Initialization ---
+
+function windowInit()
+{
+    restoreFormContents();
+    updateRemoteAccessUi();
+    updateTransmitSymbolDurationLabel();
+    
+    sequenceInit();
+}
+ 
+// Setup handlers
+window.onload = windowInit;
+window.onbeforeunload = saveFormContents;
+
+
+/* 
+ * Captains log:
+ *
+
+66398.1:
+ * Added a firmware upload form, can't really test right now, but at least I get an error message.
+
+66419.5:
+ * Changed hue to a slider so absolute hue is used (avoids bug in Living Colors which don't understand relative hue)
+ * Removed Alert and Effect labels. Looks better this way.
+ * Firmware upload does not work --> disabled
+
+08-01-2013:
+ NOTE: Format of snippets and settings has changed so backup before upgrading. 
+ 
+ * Update schedule functionality so better formatted datetimes are sent (new bridge is a bit more critical on formatting)
+ * Added sequencer to record/replay/create sequences of commands
+ * Added lamp id remapping for /lights /groups
+ * Misc layout changes
+ 
+21-01-2013
+ * remapping works for /scenes and /schedules (should be everything)
+ * Added firmware upgrade
+ * Added internal ony notice
+ * Added remap reminder (box will flash orange when remapping is enabled)
+ * No error on empty sequence (inserts an empty list now)
+ * Correctly scope loop variables (fixes bug where for manual commands Count was not working when remapping was enabled.)
+ * Timestamp based playback (use same timing as used when recording)
+ 
+
+*/
+</script>
+
+    </body>
+</html>
