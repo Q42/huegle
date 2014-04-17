@@ -8,7 +8,8 @@ body {
   background-image: url(http://tympanus.net/Tutorials/CSSButtonsPseudoElements/images/bg.jpg);
 }
 
-button {
+button, a {
+  text-align: center;
   background-color:#3bb3e0;
   padding:10px;
   position:relative;
@@ -79,7 +80,7 @@ button:active {
   );
 }
 
-button {
+button, a {
   display: block;
   width: 40%;
   margin: 30px auto;
@@ -87,25 +88,31 @@ button {
 }
 </style></head>
    <body>
-      <button id="boing" type="submit">Boing</button>
-      <button id="changecolor" type="submit">Change color</button>
-      <button id="colorloop" type="submit">Colorloop</button>
-      <button id="stopEffect" type="submit">Stop Colorloop</button>
+      <button id="allOff" type="submit">All off</button>
       <button id="brightnessLow" type="submit">Low brightness</button>
       <button id="brightnessFull" type="submit">Full brightness</button>
+
+      <button id="changecolor" type="submit">Change color</button>
       <button id="blink" type="submit">Blink</button>
-      <button id="blinkmore" type="submit">Moooaare Blinks!</button>
-      <button id="knightrider" type="submit">Knight Rider</button>
-      <button id="knightrideroff" type="submit">Knight Rider Off</button>
-      <button id="police" type="submit">Police</button>
-      <button id="policeoff" type="submit">Police Off</button>
-      <button id="allOn" type="submit">All on</button>
-      <button id="allOff" type="submit">All off</button>
-      <button id="dutchflag" type="submit">Dutch Flag</button>
+      <!--<button id="boing" type="submit">Boing</button>-->
+      <button id="colorloop" type="submit">Colorloop</button>
+      <button id="stopEffect" type="submit">Stop Colorloop</button>
+
+      <a href="games">Games!</a>
+
+      <!--<button id="knightrider" type="submit">Knight Rider</button>
+      <button id="knightrideroff" type="submit">Knight Rider Off</button>-->
       <pre id="output">
     </pre>
     <script src="jquery.min.js"></script>
+
+    <script src="games/js/settings.js"></script>
+    <script src="games/js/utils.js"></script>
+    <script src="games/js/colors.js"></script>
+    <script src="games/js/hue.js"></script>
+    <!--<script src="games/js/home.js"></script>-->
+
     <script src="js.js"></script>
-    <script src="findbridge.js"></script>
+    <!--<script src="findbridge.js"></script>-->
   </body>
 </html>

@@ -1,14 +1,13 @@
-var BRIDGE_IP = '192.168.1.101';
-var USERNAME = 'aValidUser';
+var BRIDGE_IP = Settings.bridgeIP;
+var USERNAME = Settings.bridgeKey;
 
-bindButton('#allOn', 'PUT', USERNAME + '/groups/0/action', { on: true, bri:255 });
 bindButton('#allOff', 'PUT', USERNAME + '/groups/0/action', { on: false });
-bindButton('#brightnessLow', 'PUT', USERNAME + '/groups/0/action', { bri: 10 });
-bindButton('#brightnessFull', 'PUT', USERNAME + '/groups/0/action', { bri: 255 , transitiontime: 2});
-bindButton('#blink', 'PUT', USERNAME + '/groups/0/action', { alert: 'select' });
-bindButton('#blinkmore', 'PUT', USERNAME + '/groups/0/action', { alert: 'lselect' });
-// bindButton('#colorloop', 'PUT', USERNAME + '/groups/0/action', { effect: 'colorloop' });
-bindButton('#stopEffect', 'PUT', USERNAME + '/groups/0/action', { effect: 'none' });
+bindButton('#brightnessLow', 'PUT', USERNAME + '/groups/0/action', { on:true, bri: 10, transitiontime: 2});
+bindButton('#brightnessFull', 'PUT', USERNAME + '/groups/0/action', { on: true, bri: 255, transitiontime: 2});
+bindButton('#blink', 'PUT', USERNAME + '/groups/0/action', { on: true, alert: 'select' });
+bindButton('#blinkmore', 'PUT', USERNAME + '/groups/0/action', { on: true, alert: 'lselect' });
+bindButton('#colorloop', 'PUT', USERNAME + '/groups/0/action', { on: true, effect: 'colorloop' });
+bindButton('#stopEffect', 'PUT', USERNAME + '/groups/0/action', { on: false, effect: 'none' });
 bindButton('#getFullConfig', 'GET', USERNAME);
 
 function bindButton(selector, type, resource, body) {
@@ -32,25 +31,22 @@ function send(type, resource, body) {
   });
 }
 
-$('#colorloop').on('click', function() {
-  var lights = [4,3,5,2,1,8,6,7];
-
-  function f() {
-    if (lights.length) {
-      send('PUT', USERNAME + '/lights/' + lights.shift() + '/state', { effect: 'colorloop' , on: true}).then(function() { 
-        setTimeout(f, 500); 
-      });
-    }
-  }
-  f();
-});
-
 var timeOutVar;
 
 $('#knightrider').on('click', function() {
-  var lights = [4,3,5,2,1,8,6,7];
+
+
+  var lights = [];
+  for (i = 1; i < 7*7; i++) {
+    lights[lights.length] = i;
+  }
+
   console.log("knightrider");
-  var reverseOrderLights = [7,6,8,1,2,5,3,4];
+  var reverseOrderLights = [];
+  for (i = 1; i < 7*7; i++) {
+    reverseOrderLights[lights.length] = 50 - i;
+  }
+
   var previousLight;
   var lightBeforePreviousLight;
   var lightsToUse = lights.slice(0);
@@ -109,49 +105,17 @@ $('#knightrideroff').on('click', function() {
   clearInterval(timeOutVar);
 });
 
-$('#dutchflag').on('click', function() {
-  var lights = [4,3,5,2,1,8,6,7];
-  console.log("dutch flag");
-  send('PUT', USERNAME + '/lights/' + lights[2] + '/state', {on: true, hue: 65280, bri:255, transitiontime: 10}); // red
-  send('PUT', USERNAME + '/lights/' + lights[3] + '/state', {on: true, sat:0, bri:255, transitiontime: 20}); // white
-  send('PUT', USERNAME + '/lights/' + lights[4] + '/state', {on: true, hue: 46920, bri: 255, transitiontime: 30}); // blue
-});
-
-var policeTimeoutVar;
-
-$('#police').on('click', function() {
-  var lights = [4,3,5,2,1,8,6,7];
-
-  var shouldUseRedFlash = true;
-  var hueNumber = 65280; // red
-  function flash() {
-    if (shouldUseRedFlash) {
-      hueNumber = 65280;
-    } else {   
-      hueNumber = 46920 // blue
-    }
-    send('PUT', USERNAME + '/lights/1/state', {on: true, hue: hueNumber, transitiontime: 0}).then(
-      function() {
-        shouldUseRedFlash = !shouldUseRedFlash;
-        console.log("setting lights to on with huenumber " + hueNumber + " at " + Math.round(+new Date()/100));
-        policeTimeoutVar = setTimeout(flash, 50);
-      });
-    }
-  flash();
-});
-
-$('#policeoff').on('click', function() {
-  console.log("Police Off");
-  send('PUT', USERNAME + '/groups/0/action', {on: false});
-  clearInterval(policeTimeoutVar);
-});
 
 $('#boing').on('click', function() {
-  var lights = [4,3,5,2,1,8,6,7];
+  var lights = [];
+  for (i = 1; i < 7*7; i++) {
+    lights[lights.length] = i;
+  }
 
   function f() {
     if (lights.length) {
-      send('PUT', USERNAME + '/lights/' + lights.shift() + '/state', { alert: 'select' }).then(f);
+      send('PUT', USERNAME + '/lights/' + lights.shift() + '/state', { alert: 'select' })
+        .then(function() { Utils.sleep(200); f(); });
     }
   }
   f();
